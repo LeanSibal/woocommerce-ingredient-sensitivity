@@ -1,4 +1,8 @@
 <?php
+
+if( ! defined(  'ABSPATH' ) ) exit;
+
+define( 'WIS_VERSION' , '0.0.1' );
 /*
  * Plugin Name: WooCommerce Ingredient Sentivity
  * Plugin URI: https://github.com/LeanSibal/woocommerce-ingredient-sensitivity
@@ -10,7 +14,6 @@
  * Domain Path: /languages
  */
 
-if( ! defined(  'ABSPATH' ) ) exit;
 
 class WC_Ingredient_Sensitivity {
 	private static $instance;
@@ -18,7 +21,8 @@ class WC_Ingredient_Sensitivity {
 	private static $actions = [
 		'register_ingredients_taxonomy' => 'init',
 		'add_ingredient_senstivity_endpoint_on_myaccount' => 'init',
-		'ingredient_sensitivity_submenu_page' => 'admin_menu'
+		'ingredient_sensitivity_submenu_page' => 'admin_menu',
+		'register_custom_checkboxes_css' => 'init'
 	];
 
 	private static $filters = [
@@ -31,37 +35,14 @@ class WC_Ingredient_Sensitivity {
 		'ingredients' => 'woocommerce_account_ingredients_endpoint'
 	];
 
-	public static function get_instance() {
-		if( self:: $instance === null ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
+	public function register_custom_checkboxes_css() {
+		wp_register_style(
+			'woocommerce_ingredient_sensitivity_custom_checkboxes',
+			plugins_url( '/woocommerce-ingredient-sensitivity/assets/css/checkboxes.css' ),
+			[],
+			WIS_VERSION
+		);
 	}
-
-	public function __construct() {
-		$this->setup_filters();
-		$this->setup_actions();
-	}
-
-
-	protected function setup_filters() {
-		foreach( self::$filters as $function => $filter ) {
-			$hook = !empty( $filter['tag'] ) ? $filter['tag'] : $filter;
-			$priority = !empty( $filter['priority'] ) ? $filter['priority'] : 10;
-			$accepted_args = !empty( $filter['accepted_args'] ) ? $filter['accepted_args'] : 1;
-			add_filter( $hook, [ $this, $function ], $priority, $accepted_args );
-		}
-	}
-
-	protected function setup_actions() {
-		foreach( self::$actions as $function => $action ) {
-			$tag = !empty( $action['tag'] ) ? $action['tag'] : $action;
-			$priority = !empty( $action['priority'] ) ? $action['priority'] : 10;
-			$accepted_args = !empty( $action['accepted_args'] ) ? $action['accepted_args'] : 1;
-			add_filter( $tag, [ $this, $function ], $priority, $action );
-		}
-	}
-
 
 	public function add_ingredient_senstivity_endpoint_on_myaccount() {
 		add_rewrite_endpoint( 'ingredients', EP_PAGES );
@@ -128,6 +109,36 @@ class WC_Ingredient_Sensitivity {
 		ob_start();
 		require plugin_dir_path( __FILE__ ) . 'templates/admin/ingredient_sensitivity.php';
 		echo ob_get_clean();
+	}
+
+	public static function get_instance() {
+		if( self:: $instance === null ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	public function __construct() {
+		$this->setup_filters();
+		$this->setup_actions();
+	}
+
+	protected function setup_filters() {
+		foreach( self::$filters as $function => $filter ) {
+			$hook = !empty( $filter['tag'] ) ? $filter['tag'] : $filter;
+			$priority = !empty( $filter['priority'] ) ? $filter['priority'] : 10;
+			$accepted_args = !empty( $filter['accepted_args'] ) ? $filter['accepted_args'] : 1;
+			add_filter( $hook, [ $this, $function ], $priority, $accepted_args );
+		}
+	}
+
+	protected function setup_actions() {
+		foreach( self::$actions as $function => $action ) {
+			$tag = !empty( $action['tag'] ) ? $action['tag'] : $action;
+			$priority = !empty( $action['priority'] ) ? $action['priority'] : 10;
+			$accepted_args = !empty( $action['accepted_args'] ) ? $action['accepted_args'] : 1;
+			add_filter( $tag, [ $this, $function ], $priority, $action );
+		}
 	}
 
 }
