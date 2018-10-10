@@ -22,7 +22,8 @@ class WC_Ingredient_Sensitivity {
 		'register_ingredients_taxonomy' => 'init',
 		'add_ingredient_senstivity_endpoint_on_myaccount' => 'init',
 		'ingredient_sensitivity_submenu_page' => 'admin_menu',
-		'register_custom_checkboxes_css' => 'init'
+		'register_custom_checkboxes_css' => 'init',
+		'show_ingredient_warnings' => 'woocommerce_shop_loop_item_title'
 	];
 
 	private static $filters = [
@@ -34,6 +35,10 @@ class WC_Ingredient_Sensitivity {
 		],
 		'ingredients' => 'woocommerce_account_ingredients_endpoint'
 	];
+
+	public function show_ingredient_warnings(){
+		echo '<label style="color:red">Warning: Contains Beef, Eggs and Milk</label>';
+	}
 
 	public function register_custom_checkboxes_css() {
 		wp_register_style(
