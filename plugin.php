@@ -37,7 +37,7 @@ class WC_Ingredient_Sensitivity {
 	];
 
 	public function show_ingredient_warnings(){
-		echo '<label style="color:red">Warning: Contains Beef, Eggs and Milk</label>';
+		echo '<label style="color:red">Warning: Contains Beef, Eggs and Milk</label><br/>';
 	}
 
 	public function register_custom_checkboxes_css() {
