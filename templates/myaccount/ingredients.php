@@ -4,6 +4,7 @@
 		'hide_empty' => false
 	]);
   $term_ids = get_user_meta( get_current_user_id(), 'ingredient_sensitivity', true);
+  if( empty( $term_ids ) ) $term_ids = [];
 ?>
 <h1>Ingredient Sensitivity</h1>
 <form action="<?php echo admin_url('admin-post.php'); ?>" method="POST">

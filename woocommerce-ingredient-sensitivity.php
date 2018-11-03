@@ -59,11 +59,7 @@ class WC_Ingredient_Sensitivity extends WordPressPlugin {
       }
     }
     $ingredient_sensitivity = get_user_meta( $current_user_id, 'ingredient_sensitivity', true );
-    if( empty( $ingredient_sensitivity ) ) {
-      add_user_meta( $current_user_id, 'ingredient_sensitivity', $term_ids );
-    } else {
-      update_user_meta( $current_user_id, 'ingredient_sensitivity', $term_ids );
-    }
+    update_user_meta( $current_user_id, 'ingredient_sensitivity', $term_ids );
     wp_safe_redirect( home_url() . '/my-account/ingredients' );
     exit;
   }
