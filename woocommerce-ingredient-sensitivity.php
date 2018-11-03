@@ -64,8 +64,37 @@ class WC_Ingredient_Sensitivity extends WordPressPlugin {
     exit;
   }
 
+  private $user_sensitivity_term_ids = false;
+
+  private function get_user_sensitivity_term_ids() {
+    if( !$this->user_sensitivity_term_ids ) {
+      $term_ids = get_user_meta( get_current_user_id(), 'ingredient_sensitivity', true );
+      $this->user_sensitivity_term_ids = !empty( $term_ids ) ? $term_ids : [];
+    }
+    return $this->user_sensitivity_term_ids;
+  }
+
+  private function implode_list( $array ) {
+    $last  = array_slice($array, -1);
+    $first = join(', ', array_slice($array, 0, -1));
+    $both  = array_filter(array_merge(array($first), $last), 'strlen');
+    return join(' and ', $both);
+  }
+
 	public function show_ingredient_warnings(){
-		echo '<label style="color:red">Warning: Contains Beef, Eggs and Milk</label><br/>';
+    $user_sensitivity_term_ids = $this->get_user_sensitivity_term_ids();
+    if( empty( $user_sensitivity_term_ids ) ) return;
+    global $post;
+    $sensitivity_list = [];
+    $product_ingredients = wp_get_post_terms( $post->ID, 'ingredients' );
+    foreach( $product_ingredients as $product_ingredient ) {
+      if( in_array( $product_ingredient->term_id, $user_sensitivity_term_ids ) ) {
+        $sensitivity_list[] = $product_ingredient->name;
+      }
+    }
+    if( !empty( $sensitivity_list ) ) {
+      echo '<label style="color:red">Warning: Contains ' . $this->implode_list( $sensitivity_list ) . '</label><br/>';
+    }
 	}
 
 	public function add_ingredient_senstivity_endpoint_on_myaccount() {
